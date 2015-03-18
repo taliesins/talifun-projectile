@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile", "src\Talifun.Projectile\Talifun.Projectile.csproj", "{A9F32504-5A06-49AE-8AA8-46B3504A97E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Exampes.Client", "src\Talifun.Projectile.Examples.Client\Talifun.Projectile.Examples.Client.csproj", "{908EE9CF-FCA7-43F3-8D5C-915A4603DE78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Exampes.Server", "src\Talifun.Projectile.Examples.Server\Talifun.Projectile.Examples.Server.csproj", "{8C770035-E180-429A-86DD-85EAF6917E78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Tests", "src\Talifun.Projectile.Tests\Talifun.Projectile.Tests.csproj", "{65F255F5-B729-4765-99B2-47E7B0469194}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Examples.Client2", "src\Talifun.Projectile.Examples.Client2\Talifun.Projectile.Examples.Client2.csproj", "{0A913353-5A1E-41FC-A885-22D883342700}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9F32504-5A06-49AE-8AA8-46B3504A97E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9F32504-5A06-49AE-8AA8-46B3504A97E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9F32504-5A06-49AE-8AA8-46B3504A97E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9F32504-5A06-49AE-8AA8-46B3504A97E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{908EE9CF-FCA7-43F3-8D5C-915A4603DE78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{908EE9CF-FCA7-43F3-8D5C-915A4603DE78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{908EE9CF-FCA7-43F3-8D5C-915A4603DE78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{908EE9CF-FCA7-43F3-8D5C-915A4603DE78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C770035-E180-429A-86DD-85EAF6917E78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C770035-E180-429A-86DD-85EAF6917E78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C770035-E180-429A-86DD-85EAF6917E78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C770035-E180-429A-86DD-85EAF6917E78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F255F5-B729-4765-99B2-47E7B0469194}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F255F5-B729-4765-99B2-47E7B0469194}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F255F5-B729-4765-99B2-47E7B0469194}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F255F5-B729-4765-99B2-47E7B0469194}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A913353-5A1E-41FC-A885-22D883342700}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A913353-5A1E-41FC-A885-22D883342700}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A913353-5A1E-41FC-A885-22D883342700}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A913353-5A1E-41FC-A885-22D883342700}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
