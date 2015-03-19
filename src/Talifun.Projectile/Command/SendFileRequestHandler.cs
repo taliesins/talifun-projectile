@@ -1,32 +1,35 @@
 ﻿using System;
 using System.IO;
-using ProtoBuf;
 
 namespace Talifun.Projectile.Command
 {
     public class SendFileRequestHandler 
     {
-        public int Execute(Stream stream, long metaDataLength)
+        public Reply<SendFileReply> Execute(SendFileRequest command, Stream stream = null)
         {
-            if (metaDataLength != stream.Length)
-            {
-                throw new Exception("Unexpected stream attached");
-            }
-            var command = Serializer.Deserialize<SendFileRequest>(stream);
-            return Execute(command);
+            return Execute(command.FilePath, stream);
         }
 
-        public int Execute(SendFileRequest command)
-        {
-            return Execute(command.FilePath);
-        }
-
-        public int Execute(string filePath)
+        public Reply<SendFileReply> Execute(string filePath, Stream stream = null)
         {
             if (string.IsNullOrWhiteSpace(filePath))
-                throw new ArgumentNullException("No file path was specified", "filePath");
+                throw new ArgumentNullException("filePath", "No file path was specified");
 
-            return 0;
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException("File not found: " + filePath);
+            }
+
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            var message = new SendFileReply();
+            var reply = new Reply<SendFileReply>
+            {
+                Message = message,
+                Stream = fileStream
+            };
+
+            return reply;
         }
     }
 }

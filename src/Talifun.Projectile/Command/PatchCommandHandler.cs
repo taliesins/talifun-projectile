@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using ProtoBuf;
 using Talifun.Projectile.Core;
 using Talifun.Projectile.Diagnostics;
 
@@ -10,30 +9,19 @@ namespace Talifun.Projectile.Command
     {
         private IProgressReporter _progressReporter;
 
-        public int Execute(Stream stream, long metaDataLength)
+        public Reply Execute(PatchCommand command, Stream stream = null)
         {
-            if (metaDataLength != stream.Length)
-            {
-                throw new Exception("Unexpected stream attached");
-            }
-
-            var command = Serializer.Deserialize<PatchCommand>(stream);
-            return Execute(command);
+            return Execute(command.BasisFilePath, command.DeltaFilePath, command.NewFilePath, command.SkipHashCheck, stream);
         }
 
-        public int Execute(PatchCommand command)
-        {
-            return Execute(command.BasisFilePath, command.DeltaFilePath, command.NewFilePath, command.SkipHashCheck);
-        }
-
-        public int Execute(string basisFilePath, string deltaFilePath, string newFilePath, bool skipHashCheck)
+        public Reply Execute(string basisFilePath, string deltaFilePath, string newFilePath, bool skipHashCheck, Stream stream = null)
         {
             if (string.IsNullOrWhiteSpace(basisFilePath))
-                throw new ArgumentNullException("No basis file was specified", "basis-file");
+                throw new ArgumentNullException("basisFilePath", "No basis file was specified");
             if (string.IsNullOrWhiteSpace(deltaFilePath))
-                throw new ArgumentNullException("No delta file was specified", "delta-file");
+                throw new ArgumentNullException("deltaFilePath", "No delta file was specified");
             if (string.IsNullOrWhiteSpace(newFilePath))
-                throw new ArgumentNullException("No new file was specified", "new-file");
+                throw new ArgumentNullException("newFilePath", "No new file was specified");
 
             basisFilePath = Path.GetFullPath(basisFilePath);
             deltaFilePath = Path.GetFullPath(deltaFilePath);
@@ -60,7 +48,7 @@ namespace Talifun.Projectile.Command
                 delta.Apply(basisStream, new BinaryDeltaReader(deltaStream, _progressReporter), newFileStream);
             }
 
-            return 0;
+            return null;
         }
     }
 }

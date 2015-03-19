@@ -3,12 +3,12 @@ using Udt;
 
 namespace Talifun.Projectile
 {
-    public class ReadOnlySocketStream : Stream
+    public class ReadOnlyUdtSocketStream : Stream
     {
         private readonly Socket _socket;
-        private readonly long _length;
+        private long _length;
 
-        public ReadOnlySocketStream(Udt.Socket socket, long length)
+        public ReadOnlyUdtSocketStream(Udt.Socket socket, long length)
         {
             _socket = socket;
             _length = length;

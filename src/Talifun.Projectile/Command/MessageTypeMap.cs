@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Talifun.Projectile.Rubbish.Structures;
 
 namespace Talifun.Projectile.Command
 {
@@ -8,21 +9,21 @@ namespace Talifun.Projectile.Command
     {
         public static readonly Dictionary<MessageType, Type> MessageCodeToTypeMap;
         public static readonly Dictionary<Type, MessageType> TypeToMessageCodeMap;
-        public static readonly Dictionary<Type, Func<Stream, long, int>> TypeToMessageHandlerMap;
+        public static readonly Dictionary<Type, Func<Stream, long, Reply>> TypeToMessageHandlerMap;
 
         static MessageTypeMap()
         {
             var messageMappings = new List<MessageMapping>
             {
-                new MessageMapping { MessageType = MessageType.Error, Type = typeof(ErrorCommand), Handler = new ErrorCommandHandler().Execute },
-                new MessageMapping { MessageType = MessageType.DeltaCommand, Type = typeof(DeltaCommand), Handler = new DeltaCommandHandler().Execute },
-                new MessageMapping { MessageType = MessageType.PatchCommand, Type = typeof(PatchCommand), Handler = new PatchCommandHandler().Execute },
-                new MessageMapping { MessageType = MessageType.SendFileRequest, Type = typeof(SendFileReply), Handler = new SendFileReplyHandler().Execute },
-                new MessageMapping { MessageType = MessageType.SendFileResponse, Type = typeof(SendFileRequest), Handler = new SendFileRequestHandler().Execute },
-                new MessageMapping { MessageType = MessageType.SignatureCommand, Type = typeof(SignatureCommand), Handler = new SignatureCommandHander().Execute },
+                new MessageMapping { MessageType = MessageType.Error, Type = typeof(ErrorCommand), Handler = (stream, length) => new ErrorCommandHandler().Execute(stream.GetMetaData<ErrorCommand>(length), stream) },
+                new MessageMapping { MessageType = MessageType.DeltaCommand, Type = typeof(DeltaCommand), Handler = (stream, length) => new DeltaCommandHandler().Execute(stream.GetMetaData<DeltaCommand>(length), stream) },
+                new MessageMapping { MessageType = MessageType.PatchCommand, Type = typeof(PatchCommand), Handler = (stream, length) => new PatchCommandHandler().Execute(stream.GetMetaData<PatchCommand>(length), stream) },
+                new MessageMapping { MessageType = MessageType.SendFileRequest, Type = typeof(SendFileReply), Handler = (stream, length) => new SendFileReplyHandler().Execute(stream.GetMetaData<SendFileReply>(length), stream) },
+                new MessageMapping { MessageType = MessageType.SendFileResponse, Type = typeof(SendFileRequest), Handler = (stream, length) => new SendFileRequestHandler().Execute(stream.GetMetaData<SendFileRequest>(length), stream) },
+                new MessageMapping { MessageType = MessageType.SignatureCommand, Type = typeof(SignatureCommand), Handler = (stream, length) => new SignatureCommandHander().Execute(stream.GetMetaData<SignatureCommand>(length), stream) },
             };
 
-            TypeToMessageHandlerMap = new Dictionary<Type, Func<Stream, long, int>>();
+            TypeToMessageHandlerMap = new Dictionary<Type, Func<Stream, long, Reply>>();
             foreach (var messageMapping in messageMappings)
             {
                 TypeToMessageHandlerMap.Add(messageMapping.Type, messageMapping.Handler);
@@ -43,9 +44,15 @@ namespace Talifun.Projectile.Command
             }
         }
 
-        public static void ExecuteCommand(Type type, long metaDataLength, ReadOnlySocketStream stream)
+        public static void ExecuteCommand(BlockingBufferManager blockingBufferManager, Udt.Socket client, Type type, long messageLength, long metaDataLength)
         {
-            TypeToMessageHandlerMap[type](stream, metaDataLength);
+            var requestStream = new ReadOnlyUdtSocketStream(client, messageLength);
+            var reply = TypeToMessageHandlerMap[type](requestStream, metaDataLength);
+
+            if (reply != null)
+            {
+                client.Write(blockingBufferManager, reply.AddMessageToStream(), reply.Stream);
+            }
         }
     }
 }

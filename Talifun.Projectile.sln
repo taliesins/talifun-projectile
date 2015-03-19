@@ -5,13 +5,15 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile", "src\Talifun.Projectile\Talifun.Projectile.csproj", "{A9F32504-5A06-49AE-8AA8-46B3504A97E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Exampes.Client", "src\Talifun.Projectile.Examples.Client\Talifun.Projectile.Examples.Client.csproj", "{908EE9CF-FCA7-43F3-8D5C-915A4603DE78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Examples.Client", "src\Talifun.Projectile.Examples.Client\Talifun.Projectile.Examples.Client.csproj", "{908EE9CF-FCA7-43F3-8D5C-915A4603DE78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Exampes.Server", "src\Talifun.Projectile.Examples.Server\Talifun.Projectile.Examples.Server.csproj", "{8C770035-E180-429A-86DD-85EAF6917E78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Examples.Server", "src\Talifun.Projectile.Examples.Server\Talifun.Projectile.Examples.Server.csproj", "{8C770035-E180-429A-86DD-85EAF6917E78}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Tests", "src\Talifun.Projectile.Tests\Talifun.Projectile.Tests.csproj", "{65F255F5-B729-4765-99B2-47E7B0469194}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talifun.Projectile.Examples.Client2", "src\Talifun.Projectile.Examples.Client2\Talifun.Projectile.Examples.Client2.csproj", "{0A913353-5A1E-41FC-A885-22D883342700}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exampes", "Exampes", "{2CC03416-77C4-43AE-879E-28260EF1535E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,5 +44,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{908EE9CF-FCA7-43F3-8D5C-915A4603DE78} = {2CC03416-77C4-43AE-879E-28260EF1535E}
+		{8C770035-E180-429A-86DD-85EAF6917E78} = {2CC03416-77C4-43AE-879E-28260EF1535E}
+		{0A913353-5A1E-41FC-A885-22D883342700} = {2CC03416-77C4-43AE-879E-28260EF1535E}
 	EndGlobalSection
 EndGlobal

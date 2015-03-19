@@ -7,6 +7,6 @@ namespace Talifun.Projectile.Command
     {
         public MessageType MessageType { get; set; }
         public Type Type { get; set; }
-        public Func<Stream, long, int> Handler { get; set; }
+        public Func<Stream, long, Reply> Handler { get; set; }
     }
 }

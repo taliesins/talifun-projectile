@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ProtoBuf;
 using Talifun.Projectile.Core;
 
 namespace Talifun.Projectile.Command
@@ -10,25 +9,15 @@ namespace Talifun.Projectile.Command
     {
         private readonly List<Action<SignatureBuilder>> _configuration = new List<Action<SignatureBuilder>>();
 
-        public int Execute(Stream stream, long metaDataLength)
+        public Reply Execute(SignatureCommand command, Stream stream = null)
         {
-            if (metaDataLength != stream.Length)
-            {
-                throw new Exception("Unexpected stream attached");
-            }
-            var command = Serializer.Deserialize<SignatureCommand>(stream);
-            return Execute(command);
+            return Execute(command.BasisFilePath, command.SignatureFilePath, stream);
         }
 
-        public int Execute(SignatureCommand command)
-        {
-            return Execute(command.BasisFilePath, command.SignatureFilePath);
-        }
-
-        public int Execute(string basisFilePath, string signatureFilePath)
+        public Reply Execute(string basisFilePath, string signatureFilePath, Stream stream = null)
         {
             if (string.IsNullOrWhiteSpace(basisFilePath))
-                throw new ArgumentNullException("No basis file was specified", "basis-file");
+                throw new ArgumentNullException("basisFilePath", "No basis file was specified");
 
             basisFilePath = Path.GetFullPath(basisFilePath);
 
@@ -60,7 +49,7 @@ namespace Talifun.Projectile.Command
                 signatureBuilder.Build(basisStream, new SignatureWriter(signatureStream));
             }
 
-            return 0;
+            return null;
         }
     }
 }

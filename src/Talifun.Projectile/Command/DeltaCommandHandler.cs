@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ProtoBuf;
 using Talifun.Projectile.Core;
 
 namespace Talifun.Projectile.Command
@@ -10,27 +9,17 @@ namespace Talifun.Projectile.Command
     {
         private readonly List<Action<DeltaBuilder>> _configuration = new List<Action<DeltaBuilder>>();
 
-        public int Execute(Stream stream, long metaDataLength)
+        public Reply Execute(DeltaCommand command, Stream stream = null)
         {
-            if (metaDataLength != stream.Length)
-            {
-                throw new Exception("Unexpected stream attached");
-            }
-            var command = Serializer.Deserialize<DeltaCommand>(stream);
-            return Execute(command);
+            return Execute(command.NewFilePath, command.SignatureFilePath, command.DeltaFilePath, stream);
         }
 
-        public int Execute(DeltaCommand command)
-        {
-            return Execute(command.NewFilePath, command.SignatureFilePath, command.DeltaFilePath);
-        }
-
-        public int Execute(string newFilePath, string signatureFilePath, string deltaFilePath)
+        public Reply Execute(string newFilePath, string signatureFilePath, string deltaFilePath, Stream stream = null)
         {
             if (string.IsNullOrWhiteSpace(signatureFilePath))
-                throw new ArgumentNullException("No signature file was specified", "new-file");
+                throw new ArgumentNullException("signatureFilePath", "No signature file was specified");
             if (string.IsNullOrWhiteSpace(newFilePath))
-                throw new ArgumentNullException("No new file was specified", "new-file");
+                throw new ArgumentNullException("newFilePath", "No new file was specified");
 
             newFilePath = Path.GetFullPath(newFilePath);
             signatureFilePath = Path.GetFullPath(signatureFilePath);
@@ -69,7 +58,7 @@ namespace Talifun.Projectile.Command
                 delta.BuildDelta(newFileStream, new SignatureReader(signatureStream, delta.ProgressReporter), new AggregateCopyOperationsDecorator(new BinaryDeltaWriter(deltaStream)));
             }
 
-            return 0;
+            return null;
         }
     }
 }

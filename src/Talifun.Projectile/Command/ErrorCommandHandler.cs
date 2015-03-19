@@ -1,29 +1,17 @@
-﻿using System;
-using System.IO;
-using ProtoBuf;
+﻿using System.IO;
 
 namespace Talifun.Projectile.Command
 {
     public class ErrorCommandHandler
     {
-        public int Execute(Stream stream, long metaDataLength)
+        public Reply Execute(ErrorCommand command, Stream stream = null)
         {
-            if (metaDataLength != stream.Length)
-            {
-                throw new Exception("Unexpected stream attached");
-            }
-            var command = Serializer.Deserialize<ErrorCommand>(stream);
-            return Execute(command);
+            return Execute(command.Exception, stream);
         }
 
-        public int Execute(ErrorCommand command)
+        public Reply Execute(string exception, Stream stream = null)
         {
-            return Execute(command.Exception);
-        }
-
-        public int Execute(string exception)
-        {
-            return 0;
+            return null;
         }
     }
 }

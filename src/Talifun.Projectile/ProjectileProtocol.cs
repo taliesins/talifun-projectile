@@ -10,19 +10,23 @@ namespace Talifun.Projectile
 {
     public static class ProjectileProtocol
     {
-        public static void WriteRead<T>(this Udt.Socket client, BlockingBufferManager blockingBufferManager, T message,
-            Stream streamToSend = null) where T : class
+        public static void WriteRead<T>(this Udt.Socket client, BlockingBufferManager blockingBufferManager, T message, Stream streamToSend = null) where T : class
         {
-            Write(client, blockingBufferManager, message, streamToSend);
+            WriteRead(client, blockingBufferManager, typeof(T), (stream) => Serializer.Serialize<T>(stream, message), streamToSend);
+        }
+
+        public static void WriteRead(this Udt.Socket client, BlockingBufferManager blockingBufferManager, Type messageType, Action<Stream> addMessageFunction, Stream streamToSend = null)
+        {
+            Write(client, blockingBufferManager, messageType, addMessageFunction, streamToSend);
             Read(client, blockingBufferManager);
         }
 
-        public static void Write<T>(this Udt.Socket client, BlockingBufferManager blockingBufferManager, T message, Stream streamToSend = null) where T : class
+        public static void Write(this Udt.Socket client, BlockingBufferManager blockingBufferManager, Type messageType, Action<Stream> addMessageFunction, Stream streamToSend = null)
         {
             const int sizeSize = sizeof(long);
             const int codeSize = sizeof(byte);
 
-            var messageCode = MessageTypeMap.TypeToMessageCodeMap[typeof(T)];
+            var messageCode = MessageTypeMap.TypeToMessageCodeMap[messageType];
 
             var buffer = blockingBufferManager.GetBuffer();
             try
@@ -31,15 +35,15 @@ namespace Talifun.Projectile
                 {
                     stream.Position = sizeSize + codeSize + sizeSize;
 
-                    Serializer.Serialize<T>(stream, message);
+                    addMessageFunction(stream);
                     var metaDataLength = stream.Position - sizeSize - codeSize - sizeSize;
                     var messageLength = codeSize + sizeSize + metaDataLength + (streamToSend == null ? 0 : streamToSend.Length);
-                    
+
                     var messageSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(messageLength));
                     Array.Copy(messageSize, 0, buffer.Array, buffer.Offset, sizeSize);
 
                     buffer.Array[buffer.Offset + sizeSize] = (byte)messageCode;
-                    
+
                     var metaDataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(metaDataLength));
                     Array.Copy(metaDataSize, 0, buffer.Array, buffer.Offset + sizeSize + codeSize, sizeSize);
 
@@ -70,6 +74,11 @@ namespace Talifun.Projectile
             }
         }
 
+        public static void Write<T>(this Udt.Socket client, BlockingBufferManager blockingBufferManager, T message, Stream streamToSend = null) where T : class
+        {
+            client.Write(blockingBufferManager, typeof(T), (stream) => Serializer.Serialize<T>(stream, message), streamToSend);
+        }
+
         public static void Read(this Udt.Socket client, BlockingBufferManager blockingBufferManager)
         {
             const int sizeSize = sizeof(long);
@@ -85,8 +94,7 @@ namespace Talifun.Projectile
                 var metaDataLength = IPAddress.NetworkToHostOrder(BitConverter.ToInt64(buffer.Array, buffer.Offset + codeSize + sizeSize));
                 var messageType = MessageTypeMap.MessageCodeToTypeMap[messageTypeCode];
 
-                var stream = new ReadOnlySocketStream(client, messageLength - codeSize - sizeSize);
-                MessageTypeMap.ExecuteCommand(messageType, metaDataLength, stream);
+                MessageTypeMap.ExecuteCommand(blockingBufferManager, client, messageType, messageLength - codeSize - sizeSize, metaDataLength);
             }
             finally
             {
@@ -101,6 +109,17 @@ namespace Talifun.Projectile
             var handle = (int)GetSocketHandle.GetValue(client);
 
             return handle;
+        }
+
+        public static T GetMetaData<T>(this Stream stream, long metaDataLength)
+        {
+            if (metaDataLength != stream.Length)
+            {
+                throw new Exception("Unexpected stream attached");
+            }
+            var command = Serializer.Deserialize<T>(stream);
+
+            return command;
         }
     }
 }
