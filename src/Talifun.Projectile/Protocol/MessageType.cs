@@ -1,4 +1,4 @@
-﻿namespace Talifun.Projectile.Command
+﻿namespace Talifun.Projectile.Protocol
 {
     public enum MessageType
     {

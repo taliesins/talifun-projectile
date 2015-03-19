@@ -48,13 +48,12 @@
     <Compile Include="Command\ErrorCommand.cs" />
     <Compile Include="Command\ErrorCommandHandler.cs" />
     <Compile Include="Command\MessageMapping.cs" />
-    <Compile Include="Command\MessageTypeMap.cs" />
-    <Compile Include="Command\MessageType.cs" />
+    <Compile Include="Protocol\MessageTypeMap.cs" />
+    <Compile Include="Protocol\MessageType.cs" />
     <Compile Include="Command\DeltaCommand.cs" />
     <Compile Include="Command\DeltaCommandHandler.cs" />
-    <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\PatchCommand.cs" />
-    <Compile Include="Command\Reply.cs" />
+    <Compile Include="Protocol\Reply.cs" />
     <Compile Include="Command\SendFileRequest.cs" />
     <Compile Include="Command\SendFileRequestHandler.cs" />
     <Compile Include="Command\SendFileReplyHandler.cs" />
@@ -90,7 +89,7 @@
     <Compile Include="Diagnostics\ConsoleProgressReporter.cs" />
     <Compile Include="Diagnostics\IProgressReporter.cs" />
     <Compile Include="Diagnostics\NullProgressReporter.cs" />
-    <Compile Include="ProjectileProtocol.cs" />
+    <Compile Include="Protocol\ProjectileProtocol.cs" />
     <Compile Include="Rubbish\Helper\LazyAsyncResult.cs" />
     <Compile Include="Rubbish\Structures\BlockingBufferManager.cs" />
     <Compile Include="Rubbish\Structures\BlockingLimitedList.cs" />
@@ -117,7 +116,7 @@
     <Compile Include="Rubbish\Helper\UdtClient.cs" />
     <Compile Include="Rubbish\Helper\UdtListener.cs" />
     <Compile Include="Rubbish\UdtSocket.cs" />
-    <Compile Include="ReadOnlyUdtSocketStream.cs" />
+    <Compile Include="Protocol\ReadOnlyUdtSocketStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,12 +1,12 @@
 ﻿using System.IO;
 using Udt;
 
-namespace Talifun.Projectile
+namespace Talifun.Projectile.Protocol
 {
     public class ReadOnlyUdtSocketStream : Stream
     {
         private readonly Socket _socket;
-        private long _length;
+        private readonly long _length;
 
         public ReadOnlyUdtSocketStream(Udt.Socket socket, long length)
         {

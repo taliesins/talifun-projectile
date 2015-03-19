@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Talifun.Projectile.Command;
 using Talifun.Projectile.Rubbish.Structures;
 
-namespace Talifun.Projectile.Command
+namespace Talifun.Projectile.Protocol
 {
     public static class MessageTypeMap
     {

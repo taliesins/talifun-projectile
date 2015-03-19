@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Talifun.Projectile.Command;
+using Talifun.Projectile.Protocol;
 using Talifun.Projectile.Rubbish.Structures;
 
 namespace Talifun.Projectile.Examples.Client

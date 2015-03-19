@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Talifun.Projectile.Core;
+using Talifun.Projectile.Protocol;
 
 namespace Talifun.Projectile.Command
 {

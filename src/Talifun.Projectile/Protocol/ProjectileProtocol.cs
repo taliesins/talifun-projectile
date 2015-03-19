@@ -6,7 +6,7 @@ using ProtoBuf;
 using Talifun.Projectile.Command;
 using Talifun.Projectile.Rubbish.Structures;
 
-namespace Talifun.Projectile
+namespace Talifun.Projectile.Protocol
 {
     public static class ProjectileProtocol
     {

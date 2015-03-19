@@ -2,7 +2,7 @@
 using System.IO;
 using ProtoBuf;
 
-namespace Talifun.Projectile.Command
+namespace Talifun.Projectile.Protocol
 {
     public abstract class Reply
     {
