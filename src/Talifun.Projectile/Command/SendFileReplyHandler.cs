@@ -8,14 +8,23 @@ namespace Talifun.Projectile.Command
     {
         public Reply Execute(SendFileReply command, Stream stream = null)
         {
-            return Execute(command.FileName, stream);
+            return Execute(command.LocalFilePath, command.RemoteFilePath, stream);
         }
 
-        public Reply Execute(string filePath, Stream stream = null)
+        public Reply Execute(string localFilePath, string remoteFilePath = null, Stream stream = null)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
-                throw new ArgumentNullException("filePath", "No file path was specified");
+            if (string.IsNullOrWhiteSpace(localFilePath))
+                throw new ArgumentNullException("localFilePath", "No file path was specified");
 
+            if (stream == null)
+                throw new ArgumentNullException("stream", "No file stream");
+
+            const int bufferSize = 4096;
+            using (var fileStream = File.Create(localFilePath, bufferSize, FileOptions.SequentialScan | FileOptions.Asynchronous | FileOptions.WriteThrough))
+            {
+                stream.CopyTo(fileStream);
+            }
+         
             return null;
         }
     }

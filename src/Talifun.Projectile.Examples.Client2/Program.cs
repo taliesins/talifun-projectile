@@ -14,24 +14,27 @@ namespace Talifun.Projectile.Examples.Client2
         {
             var port = 9000;
             var ipAddress = IPAddress.Parse("127.0.0.1");
-
+            var bufferSize = 65000;
+            var bufferCount = 32;
             try
             {
-                var blockingBufferManager = new BlockingBufferManager(65000, 32);
+                var blockingBufferManager = new BlockingBufferManager(bufferSize, bufferCount);
                 Thread.Sleep(100);
-                for (int i = 1; i < 5; i++)
+                for (var i = 4; i < 5; i++)
                 { 
-                    using (Udt.Socket client = new Udt.Socket(AddressFamily.InterNetwork, SocketType.Stream))
+                    using (var client = new Udt.Socket(AddressFamily.InterNetwork, SocketType.Stream))
                     {
                         client.Connect(ipAddress, port);
 
                         var sendFileRequest = new SendFileRequest
                         {
-                            FilePath = string.Format("c:\\Temp\\temp{0}.pdf", i)
+                            RemoteFilePath = string.Format("c:\\Temp\\test.pdf", i),
+                            LocalFilePath = string.Format("c:\\Temp\\reply-temp{0}.pdf", i)
                         };
 
-                        Console.WriteLine("Requesting file {0}", sendFileRequest.FilePath);
-                        client.Write(blockingBufferManager, sendFileRequest);
+                        Console.WriteLine("Requesting file {0}", sendFileRequest.RemoteFilePath);
+                        client.WriteRead(blockingBufferManager, sendFileRequest);
+                        Console.WriteLine("Saved to file {0}", sendFileRequest.LocalFilePath);
                     }
                 }
 

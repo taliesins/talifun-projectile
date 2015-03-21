@@ -95,7 +95,7 @@ namespace Talifun.Projectile.Examples.Server
 
         private static void ProcessRequest(IPEndPoint ipAddress, Udt.SocketPoller poller, BlockingBufferManager blockingBufferManager)
         {
-            var requestHandlerTimeoutInactivity = TimeSpan.FromSeconds(1);
+            var requestHandlerTimeoutInactivity = TimeSpan.FromSeconds(30);
 
             do
             {

@@ -14,51 +14,28 @@ namespace Talifun.Projectile.Examples.Client
         {
             var port = 9000;
             var ipAddress = IPAddress.Parse("127.0.0.1");
+            var bufferSize = 65000;
+            var bufferCount = 32;
 
             try
             {
-                var blockingBufferManager = new BlockingBufferManager(65000, 32);
+                var blockingBufferManager = new BlockingBufferManager(bufferSize, bufferCount);
                 Thread.Sleep(100);
-                using (Udt.Socket client = new Udt.Socket(AddressFamily.InterNetwork, SocketType.Stream))
+                using (var client = new Udt.Socket(AddressFamily.InterNetwork, SocketType.Stream))
                 {
                     client.Connect(ipAddress, port);
 
-                    var sendFileRequest = new SendFileRequest
+                    for (var i = 7; i < 5; i++)
                     {
-                        FilePath = "c:\\Temp\\temp.pdf"
-                    };
+                        var sendFileRequest = new SendFileRequest
+                        {
+                            RemoteFilePath = string.Format("c:\\Temp\\test.pdf", i),
+                            LocalFilePath = string.Format("c:\\Temp\\reply2-temp{0}.pdf", i)
+                        };
 
-                    Console.WriteLine("Requesting file {0}", sendFileRequest.FilePath);
-                    client.Write(blockingBufferManager, sendFileRequest);
-
-                    Console.WriteLine("Requesting file {0}", sendFileRequest.FilePath);
-                    client.Write(blockingBufferManager, sendFileRequest);
-
-                    Console.WriteLine("Requesting file {0}", sendFileRequest.FilePath);
-                    client.Write(blockingBufferManager, sendFileRequest);
-
-                    Console.WriteLine("Requesting file {0}", sendFileRequest.FilePath);
-                    client.Write(blockingBufferManager, sendFileRequest);
-                    
-                    //client.WriteRead(blockingBufferManager, sendFileRequest);
-
-                    //// Send name information of the requested file
-                    //string name = args[2];
-                    //byte[] nameBytes = Encoding.UTF8.GetBytes(name);
-
-                    //client.Send(BitConverter.GetBytes(nameBytes.Length), 0, sizeof(int));
-                    //client.Send(nameBytes);
-
-                    //// Get size information
-                    //long size;
-                    //byte[] file = new byte[1024];
-
-                    //client.Receive(file, 0, sizeof(long));
-                    //size = BitConverter.ToInt64(file, 0);
-
-                    //// Receive the file
-                    //string localName = args[3];
-                    //client.ReceiveFile(localName, size);
+                        Console.WriteLine("Requesting file {0}", sendFileRequest.RemoteFilePath);
+                        client.WriteRead(blockingBufferManager, sendFileRequest); 
+                    }
                 }
 
                 Console.ReadKey(true);

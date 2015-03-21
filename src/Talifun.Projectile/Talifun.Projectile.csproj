@@ -48,11 +48,13 @@
     <Compile Include="Command\ErrorCommand.cs" />
     <Compile Include="Command\ErrorCommandHandler.cs" />
     <Compile Include="Command\MessageMapping.cs" />
+    <Compile Include="Protocol\FixedLengthReadOnlyStream.cs" />
     <Compile Include="Protocol\MessageTypeMap.cs" />
     <Compile Include="Protocol\MessageType.cs" />
     <Compile Include="Command\DeltaCommand.cs" />
     <Compile Include="Command\DeltaCommandHandler.cs" />
     <Compile Include="Command\PatchCommand.cs" />
+    <Compile Include="Protocol\WriteOnlyUdtSocketStream.cs" />
     <Compile Include="Protocol\Reply.cs" />
     <Compile Include="Command\SendFileRequest.cs" />
     <Compile Include="Command\SendFileRequestHandler.cs" />

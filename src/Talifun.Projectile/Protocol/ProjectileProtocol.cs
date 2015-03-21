@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using ProtoBuf;
-using Talifun.Projectile.Command;
 using Talifun.Projectile.Rubbish.Structures;
 
 namespace Talifun.Projectile.Protocol
@@ -37,36 +36,31 @@ namespace Talifun.Projectile.Protocol
 
                     addMessageFunction(stream);
                     var metaDataLength = stream.Position - sizeSize - codeSize - sizeSize;
-                    var messageLength = codeSize + sizeSize + metaDataLength + (streamToSend == null ? 0 : streamToSend.Length);
+                    var messageLength = codeSize + sizeSize + metaDataLength +
+                                        (streamToSend == null ? 0 : streamToSend.Length);
 
                     var messageSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(messageLength));
                     Array.Copy(messageSize, 0, buffer.Array, buffer.Offset, sizeSize);
 
-                    buffer.Array[buffer.Offset + sizeSize] = (byte)messageCode;
+                    buffer.Array[buffer.Offset + sizeSize] = (byte) messageCode;
 
                     var metaDataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(metaDataLength));
                     Array.Copy(metaDataSize, 0, buffer.Array, buffer.Offset + sizeSize + codeSize, sizeSize);
 
-                    client.Send(buffer.Array, buffer.Offset, (int)(sizeSize + codeSize + sizeSize + metaDataLength));
-
+                    client.Send(buffer.Array, buffer.Offset, (int) (sizeSize + codeSize + sizeSize + metaDataLength));
+                    
                     if (streamToSend == null || streamToSend.Length <= 0) return;
 
-                    var numberOfBytesRead = 0;
-                    var maximumBufferSize = 650000;
-                    if (blockingBufferManager.BufferSize < maximumBufferSize)
+                    using (var responseStream = new WriteOnlyUdtSocketStream(client))
                     {
-                        maximumBufferSize = blockingBufferManager.BufferSize;
-                    }
-
-                    while ((numberOfBytesRead = streamToSend.Read(buffer.Array, buffer.Offset, maximumBufferSize)) > 0)
-                    {
-                        var bytesWritten = 0;
-
-                        while ((bytesWritten += client.Send(buffer.Array, buffer.Offset + bytesWritten, numberOfBytesRead - bytesWritten)) < numberOfBytesRead)
-                        {
-                        }
+                        streamToSend.CopyTo(responseStream);
                     }
                 }
+            }
+            catch (Exception exception)
+            {
+                var m = exception.Message;
+                throw;
             }
             finally
             {
@@ -76,7 +70,7 @@ namespace Talifun.Projectile.Protocol
 
         public static void Write<T>(this Udt.Socket client, BlockingBufferManager blockingBufferManager, T message, Stream streamToSend = null) where T : class
         {
-            client.Write(blockingBufferManager, typeof(T), (stream) => Serializer.Serialize<T>(stream, message), streamToSend);
+            client.Write(blockingBufferManager, typeof (T), (stream) => Serializer.Serialize<T>(stream, message), streamToSend);
         }
 
         public static void Read(this Udt.Socket client, BlockingBufferManager blockingBufferManager)
@@ -96,6 +90,11 @@ namespace Talifun.Projectile.Protocol
 
                 MessageTypeMap.ExecuteCommand(blockingBufferManager, client, messageType, messageLength - codeSize - sizeSize, metaDataLength);
             }
+            catch (Exception exception)
+            {
+                var m = exception.Message;
+                throw;
+            }
             finally
             {
                 blockingBufferManager.ReleaseBuffer(buffer);
@@ -111,12 +110,8 @@ namespace Talifun.Projectile.Protocol
             return handle;
         }
 
-        public static T GetMetaData<T>(this Stream stream, long metaDataLength)
+        public static T GetMetaData<T>(this Stream stream)
         {
-            if (metaDataLength != stream.Length)
-            {
-                throw new Exception("Unexpected stream attached");
-            }
             var command = Serializer.Deserialize<T>(stream);
 
             return command;

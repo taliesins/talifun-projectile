@@ -1,19 +1,18 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using Udt;
 
 namespace Talifun.Projectile.Protocol
 {
-    public class ReadOnlyUdtSocketStream : Stream
+    public class FixedLengthReadOnlyStream : Stream
     {
-        private readonly Socket _socket;
+        private readonly Stream _stream;
         private readonly long _length;
-        private readonly TimeSpan _timeout = new TimeSpan(0,0,30);
+        private readonly TimeSpan _timeout = new TimeSpan(0, 0, 30);
 
-        public ReadOnlyUdtSocketStream(Udt.Socket socket, long length)
+        public FixedLengthReadOnlyStream(Stream stream, long length)
         {
-            _socket = socket;
+            _stream = stream;
             _length = length;
         }
 
@@ -43,7 +42,7 @@ namespace Talifun.Projectile.Protocol
             {
                 var readLength = 0;
                 var now = DateTime.Now;
-                while ((readLength = _socket.Receive(buffer, offset, count)) < 1)
+                while ((readLength = _stream.Read(buffer, offset, count)) < 1)
                 {
                     if (now.Add(_timeout) < DateTime.Now)
                     {

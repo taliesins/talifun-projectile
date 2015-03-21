@@ -8,22 +8,28 @@ namespace Talifun.Projectile.Command
     {
         public Reply<SendFileReply> Execute(SendFileRequest command, Stream stream = null)
         {
-            return Execute(command.FilePath, stream);
+            return Execute(command.RemoteFilePath, command.LocalFilePath, stream);
         }
 
-        public Reply<SendFileReply> Execute(string filePath, Stream stream = null)
+        public Reply<SendFileReply> Execute(string remoteFilePath, string localFilePath, Stream stream = null)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
-                throw new ArgumentNullException("filePath", "No file path was specified");
+            if (string.IsNullOrWhiteSpace(remoteFilePath))
+                throw new ArgumentNullException("remoteFilePath", "No file path was specified");
 
-            if (!File.Exists(filePath))
+            if (!File.Exists(remoteFilePath))
             {
-                throw new FileNotFoundException("File not found: " + filePath);
+                throw new FileNotFoundException("File not found: " + remoteFilePath);
             }
 
-            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            const int bufferSize = 4096;
+            var fileStream = new FileStream(remoteFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan | FileOptions.Asynchronous);
 
-            var message = new SendFileReply();
+            var message = new SendFileReply
+            {
+                LocalFilePath = localFilePath,
+                RemoteFilePath = remoteFilePath
+            };
+
             var reply = new Reply<SendFileReply>
             {
                 Message = message,
