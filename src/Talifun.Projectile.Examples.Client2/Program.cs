@@ -19,8 +19,8 @@ namespace Talifun.Projectile.Examples.Client2
             try
             {
                 var blockingBufferManager = new BlockingBufferManager(bufferSize, bufferCount);
-                Thread.Sleep(100);
-                for (var i = 4; i < 5; i++)
+                Thread.Sleep(300);
+                for (var i = 1; i < 5; i++)
                 { 
                     using (var client = new Udt.Socket(AddressFamily.InterNetwork, SocketType.Stream))
                     {
@@ -29,12 +29,13 @@ namespace Talifun.Projectile.Examples.Client2
                         var sendFileRequest = new SendFileRequest
                         {
                             RemoteFilePath = string.Format("c:\\Temp\\test.pdf", i),
-                            LocalFilePath = string.Format("c:\\Temp\\reply-temp{0}.pdf", i)
+                            LocalFilePath = string.Format("c:\\Temp\\reply2-temp{0}.pdf", i)
                         };
 
                         Console.WriteLine("Requesting file {0}", sendFileRequest.RemoteFilePath);
                         client.WriteRead(blockingBufferManager, sendFileRequest);
                         Console.WriteLine("Saved to file {0}", sendFileRequest.LocalFilePath);
+                        client.Close();
                     }
                 }
 

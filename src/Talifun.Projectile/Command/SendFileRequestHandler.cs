@@ -22,7 +22,7 @@ namespace Talifun.Projectile.Command
             }
 
             const int bufferSize = 4096;
-            var fileStream = new FileStream(remoteFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan | FileOptions.Asynchronous);
+            var fileStream = new FileStream(remoteFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan | FileOptions.Asynchronous );
 
             var message = new SendFileReply
             {

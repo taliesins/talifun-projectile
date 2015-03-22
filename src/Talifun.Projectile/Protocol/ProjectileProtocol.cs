@@ -57,11 +57,11 @@ namespace Talifun.Projectile.Protocol
                     }
                 }
             }
-            catch (Exception exception)
-            {
-                var m = exception.Message;
-                throw;
-            }
+            //catch (Exception exception)
+            //{
+            //    var m = exception.Message;
+            //    throw;
+            //}
             finally
             {
                 blockingBufferManager.ReleaseBuffer(buffer);
@@ -90,11 +90,11 @@ namespace Talifun.Projectile.Protocol
 
                 MessageTypeMap.ExecuteCommand(blockingBufferManager, client, messageType, messageLength - codeSize - sizeSize, metaDataLength);
             }
-            catch (Exception exception)
-            {
-                var m = exception.Message;
-                throw;
-            }
+            //catch (Exception exception)
+            //{
+            //    var m = exception.Message;
+            //    throw;
+            //}
             finally
             {
                 blockingBufferManager.ReleaseBuffer(buffer);

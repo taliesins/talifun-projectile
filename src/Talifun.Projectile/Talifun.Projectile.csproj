@@ -28,10 +28,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="protobuf-net">
-      <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,7 +42,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UdtProtocol">
-      <HintPath>..\packages\UDT.Net.x64.0.9.0\lib\net40\UdtProtocol.dll</HintPath>
+      <HintPath>..\..\packages\UDT.Net.x64.0.9.0\lib\net40\UdtProtocol.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -92,32 +93,7 @@
     <Compile Include="Diagnostics\IProgressReporter.cs" />
     <Compile Include="Diagnostics\NullProgressReporter.cs" />
     <Compile Include="Protocol\ProjectileProtocol.cs" />
-    <Compile Include="Rubbish\Helper\LazyAsyncResult.cs" />
-    <Compile Include="Rubbish\Structures\BlockingBufferManager.cs" />
-    <Compile Include="Rubbish\Structures\BlockingLimitedList.cs" />
-    <Compile Include="Rubbish\Structures\CircularBuffer.cs" />
-    <Compile Include="Rubbish\Structures\CircularStream.cs" />
-    <Compile Include="Rubbish\Packets\Ack2Packet.cs" />
-    <Compile Include="Rubbish\Packets\AckPacket.cs" />
-    <Compile Include="Rubbish\Packets\DataPacket.cs" />
-    <Compile Include="Rubbish\Packets\HandshakePacket.cs" />
-    <Compile Include="Rubbish\Packets\Header.cs" />
-    <Compile Include="Rubbish\Packets\KeepAlivePacket .cs" />
-    <Compile Include="Rubbish\Packets\MsgDropReqPacket.cs" />
-    <Compile Include="Rubbish\Packets\NakPacket.cs" />
-    <Compile Include="Rubbish\Packets\PacketTypeEnum.cs" />
-    <Compile Include="Rubbish\Packets\ShutdownPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rubbish\SocketAwaitable.cs" />
-    <Compile Include="Rubbish\SocketAwaitablePool.cs" />
-    <Compile Include="Rubbish\SocketAwaiter.cs" />
-    <Compile Include="Rubbish\SocketEx.cs" />
-    <Compile Include="Rubbish\Structures\IPriorityQueue.cs" />
-    <Compile Include="Rubbish\Structures\PriorityQueue.cs" />
-    <Compile Include="Rubbish\Structures\PriorityQueueNode.cs" />
-    <Compile Include="Rubbish\Helper\UdtClient.cs" />
-    <Compile Include="Rubbish\Helper\UdtListener.cs" />
-    <Compile Include="Rubbish\UdtSocket.cs" />
     <Compile Include="Protocol\ReadOnlyUdtSocketStream.cs" />
   </ItemGroup>
   <ItemGroup>

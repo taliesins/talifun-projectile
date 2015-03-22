@@ -20,7 +20,7 @@ namespace Talifun.Projectile.Command
                 throw new ArgumentNullException("stream", "No file stream");
 
             const int bufferSize = 4096;
-            using (var fileStream = File.Create(localFilePath, bufferSize, FileOptions.SequentialScan | FileOptions.Asynchronous | FileOptions.WriteThrough))
+            using (var fileStream = File.Create(localFilePath, bufferSize, FileOptions.SequentialScan | FileOptions.Asynchronous  ))
             {
                 stream.CopyTo(fileStream);
             }

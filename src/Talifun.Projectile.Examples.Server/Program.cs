@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Talifun.Projectile.Protocol;
 using Talifun.Projectile.Rubbish.Structures;
+using SocketError = Udt.SocketError;
 
 namespace Talifun.Projectile.Examples.Server
 {
@@ -15,14 +17,14 @@ namespace Talifun.Projectile.Examples.Server
             var port = 9000;
             var maxQueuedConnections = 10;
             var exitEventLoop = false;
-            var checkFrequency = TimeSpan.FromSeconds(1);
             try
             {
-                var blockingBufferManager = new BlockingBufferManager(65000, 32);
                 using (var poller = new Udt.SocketPoller())
                 {
                     using (var server = new Udt.Socket(AddressFamily.InterNetwork, SocketType.Stream))
                     {
+                        var blockingBufferManager = new BlockingBufferManager(server.UdpReceiveBufferSize, maxQueuedConnections * 2);
+
                         server.Bind(IPAddress.Any, port);
                         Console.WriteLine("Server is ready at port: {0}", port);
                         server.Listen(maxQueuedConnections);
@@ -32,51 +34,32 @@ namespace Talifun.Projectile.Examples.Server
                         
                         while (!exitEventLoop)
                         {
-                            if (poller.Wait(checkFrequency))
+                            var newClient = server.Accept();
+                            
+                            var client = newClient;
+                            Task.Run(() =>
                             {
-                                foreach (var readSocket in poller.ReadSockets)
+                                try
                                 {
-                                    var socket = readSocket;
-                                    Task.Run(() =>
-                                    {
-                                        using (var listenerPoller = new Udt.SocketPoller())
-                                        {
-                                            using (var client = socket.Accept())
-                                            {
-                                                try
-                                                {
-                                                    IPEndPoint ipAddress = null;
-                                                    var maxRetries = 0;
-                                                    while (ipAddress == null)
-                                                    {
-                                                        try
-                                                        {
-                                                            ipAddress = client.RemoteEndPoint;
-                                                        }
-                                                        catch (Udt.SocketException exception)
-                                                        {
-                                                            maxRetries++;
-                                                            if (maxRetries > 5)
-                                                            {
-                                                                throw;
-                                                            }
-                                                            Thread.Yield();
-                                                        }
-                                                    }
-                                                    listenerPoller.AddSocket(client);
-                                                    ProcessRequest(ipAddress, listenerPoller, blockingBufferManager);
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    Console.Error.WriteLine("Error processing request: ({0}) {1}", client.GetSocketId(), ex.Message);
-                                                    throw;
-                                                }
-
-                                            }
-                                        }
-                                    });
+                                    ProcessRequest(client, blockingBufferManager);
                                 }
-                            }
+                                catch (Udt.SocketException socketException)
+                                {
+                                    if (socketException.SocketErrorCode == SocketError.ConnectionLost)
+                                    {
+                                        Console.Error.WriteLine("Client closed connection: ({0})", client.GetSocketId());
+                                    }
+                                    else
+                                    {
+                                        Console.Error.WriteLine("Error processing request: ({0}) {1}", client.GetSocketId(), socketException.Message);
+  
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.Error.WriteLine("Error processing request: ({0}) {1}", client.GetSocketId(), ex.Message);
+                                }  
+                            });
 
                             exitEventLoop = Console.KeyAvailable;
                         }
@@ -93,23 +76,60 @@ namespace Talifun.Projectile.Examples.Server
             }
         }
 
-        private static void ProcessRequest(IPEndPoint ipAddress, Udt.SocketPoller poller, BlockingBufferManager blockingBufferManager)
+        private static void ProcessRequest(Udt.Socket client, BlockingBufferManager blockingBufferManager)
         {
-            var requestHandlerTimeoutInactivity = TimeSpan.FromSeconds(30);
-
-            do
+            IPEndPoint ipAddress = null;
+            int socketId = 0;
+            TimeSpan timeOut = TimeSpan.FromSeconds(30);
+            bool exitListener = false;
+            using (var poller = new Udt.SocketPoller())
             {
-                foreach (var client in poller.ReadSockets)
+                poller.AddSocket(client);
+                do
                 {
-                    var socketId = client.GetSocketId();
+                    if (ipAddress == null)
+                    {
+                        var maxRetries = 0;
+                        while (ipAddress == null)
+                        {
+                            try
+                            {
+                                ipAddress = client.RemoteEndPoint;
+                            }
+                            catch (Udt.SocketException exception)
+                            {
+                                maxRetries++;
+                                if (maxRetries > 5)
+                                {
+                                    throw;
+                                }
+                                Thread.Yield();
+                            }
+                        }
+                        socketId = client.GetSocketId();
+                    }
 
-                    Console.WriteLine("Start processing connection from ({0}) {1}:{2}", socketId, ipAddress == null ? "Unknown" : ipAddress.Address.ToString(), ipAddress == null ? "unknown" : ipAddress.Port.ToString());
+                    Console.WriteLine("Start processing connection from ({0}) {1}:{2}", socketId,
+                        ipAddress == null ? "Unknown" : ipAddress.Address.ToString(),
+                        ipAddress == null ? "unknown" : ipAddress.Port.ToString());
 
                     client.Read(blockingBufferManager);
 
-                    Console.WriteLine("Finished processing connection from ({0}) {1}:{2}", socketId, ipAddress == null ? "Unknown" : ipAddress.Address.ToString(), ipAddress == null ? "unknown" : ipAddress.Port.ToString());
-                }
-            } while (poller.Wait(requestHandlerTimeoutInactivity));
+                    Console.WriteLine("Finished processing connection from ({0}) {1}:{2}", socketId,
+                        ipAddress == null ? "Unknown" : ipAddress.Address.ToString(),
+                        ipAddress == null ? "unknown" : ipAddress.Port.ToString());
+
+                    if (poller.Wait(timeOut))
+                    {
+                        exitListener = !poller.ReadSockets.Any() && !poller.WriteSockets.Any();
+                    }
+                    else
+                    {
+                        exitListener = true;
+                    }
+
+                } while (!exitListener);
+            }
         }
     }
 }

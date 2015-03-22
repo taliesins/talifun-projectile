@@ -42,14 +42,8 @@ namespace Talifun.Projectile.Protocol
             if (count > 0)
             {
                 var readLength = 0;
-                var now = DateTime.Now;
                 while ((readLength = _socket.Receive(buffer, offset, count)) < 1)
                 {
-                    if (now.Add(_timeout) < DateTime.Now)
-                    {
-                        throw new Exception("Timeout while waiting for data on socket");
-                    }
-                    //We got to block till we got some data
                     Thread.Yield();
                 }
 
