@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Talifun.Projectile.Protocol;
-using Talifun.Projectile.Rubbish.Structures;
 using SocketError = Udt.SocketError;
 
 namespace Talifun.Projectile.Examples.Server

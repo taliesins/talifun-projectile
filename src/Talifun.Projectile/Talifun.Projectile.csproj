@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockingBufferManager.cs" />
     <Compile Include="Command\ErrorCommand.cs" />
     <Compile Include="Command\ErrorCommandHandler.cs" />
     <Compile Include="Command\MessageMapping.cs" />

@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using ProtoBuf;
-using Talifun.Projectile.Rubbish.Structures;
 
 namespace Talifun.Projectile.Protocol
 {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Talifun.Projectile.Command;
-using Talifun.Projectile.Rubbish.Structures;
 
 namespace Talifun.Projectile.Protocol
 {
